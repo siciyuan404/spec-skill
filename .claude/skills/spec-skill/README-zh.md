@@ -280,6 +280,9 @@ spec-skill/
 
 ## 资源
 
+### 更新说明
+- `CHANGELOG.md` - 版本更新记录（新增/修复/变更/破坏性变更/迁移步骤）
+
 ### 参考资料
 - `references/ears-guide.md` - 详细的 EARS 表示法指南
 - `references/best-practices.md` - 全面的最佳实践
