@@ -21,6 +21,14 @@ Execute multiple spec `tasks.md` files as a managed queue with clear ordering, s
   - `Mode` (`strict` or `continue_on_blocker`)
   - `Status` (`pending`/`in_progress`/`completed`/`blocked`)
 
+Recommended helper commands:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts/spec-skill-ops.ps1 -Command queue.validate -QueueFile .specs/task-queue.md
+powershell -ExecutionPolicy Bypass -File scripts/spec-skill-ops.ps1 -Command queue.sync -QueueFile .specs/task-queue.md
+powershell -ExecutionPolicy Bypass -File scripts/spec-skill-ops.ps1 -Command queue.status -QueueFile .specs/task-queue.md
+```
+
 ## Execution Rules
 
 1. Process queue in explicit queue order first.
@@ -39,6 +47,8 @@ Execute multiple spec `tasks.md` files as a managed queue with clear ordering, s
   - `requirements.md`
   - `design.md`
   - `tasks.md`
+- Validate `Depends On` references existing queue IDs.
+- Validate `Depends On` has no cycle.
 
 If validation fails:
 - Mark affected queue item `blocked`
@@ -116,3 +126,9 @@ This hook passes only if:
 - Every status transition is recorded
 - Completed queue items have verification evidence
 - Blocked queue items have actionable root-cause notes
+
+Extra anti-over-planning guard (recommended):
+
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts/spec-skill-ops.ps1 -Command plan.cap -QueueFile .specs/task-queue.md -PendingTasksThreshold 20 -MaxPendingQueueItems 3
+```

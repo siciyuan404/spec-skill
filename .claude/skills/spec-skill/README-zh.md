@@ -44,7 +44,39 @@ WHEN 密码太短 THE SYSTEM SHALL 显示"密码必须至少 8 个字符"
 - **代码审查** - 审查最佳实践和问题
 - **性能检查** - 识别性能瓶颈
 
+### ✅ 可执行校验与模式控制（新增）
+
+- **阶段门禁校验**：`gate.requirements` / `gate.design` / `gate.tasks`
+- **队列辅助命令**：`queue.validate` / `queue.sync` / `queue.status`
+- **防过度规划**：`plan.cap`（默认阈值 pending tasks=20）
+- **显式模式**：`planning_mode` / `execution_mode`（`mode.status`、`mode.switch`）
+
 ## 快速开始
+
+### 0. 可执行辅助脚本
+
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts/spec-skill-ops.ps1 -Command mode.status -ModeFile .specs/spec-mode.md
+```
+
+常用命令：
+
+```powershell
+# 阶段门禁
+powershell -ExecutionPolicy Bypass -File scripts/spec-skill-ops.ps1 -Command gate.requirements -SpecDir .specs/{spec-name}
+powershell -ExecutionPolicy Bypass -File scripts/spec-skill-ops.ps1 -Command gate.design -SpecDir .specs/{spec-name}
+powershell -ExecutionPolicy Bypass -File scripts/spec-skill-ops.ps1 -Command gate.tasks -SpecDir .specs/{spec-name}
+
+# 队列与防过度规划
+powershell -ExecutionPolicy Bypass -File scripts/spec-skill-ops.ps1 -Command queue.validate -QueueFile .specs/task-queue.md
+powershell -ExecutionPolicy Bypass -File scripts/spec-skill-ops.ps1 -Command queue.sync -QueueFile .specs/task-queue.md
+powershell -ExecutionPolicy Bypass -File scripts/spec-skill-ops.ps1 -Command queue.status -QueueFile .specs/task-queue.md
+powershell -ExecutionPolicy Bypass -File scripts/spec-skill-ops.ps1 -Command plan.cap -QueueFile .specs/task-queue.md -PendingTasksThreshold 20 -MaxPendingQueueItems 3
+
+# 模式切换
+powershell -ExecutionPolicy Bypass -File scripts/spec-skill-ops.ps1 -Command mode.switch -ToMode planning_mode -ModeFile .specs/spec-mode.md
+powershell -ExecutionPolicy Bypass -File scripts/spec-skill-ops.ps1 -Command mode.switch -ToMode execution_mode -ModeFile .specs/spec-mode.md
+```
 
 ### 1. 创建新规范
 

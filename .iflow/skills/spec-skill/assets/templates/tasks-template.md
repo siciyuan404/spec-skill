@@ -48,6 +48,11 @@
 - Command: `{command}`
 - Expected: {observable expected result}
 
+**Completion Evidence (required when Status = completed):**
+- Verified By: manual | automation
+- Verified At: `{yyyy-mm-dd hh:mm:ss}`
+- Evidence: `{command output summary / test report / PR link}`
+
 **Sub-tasks:**
 - [ ] {Sub-task 1}
 - [ ] {Sub-task 2}
@@ -84,6 +89,11 @@
 - Command: `{command}`
 - Expected: {observable expected result}
 
+**Completion Evidence (required when Status = completed):**
+- Verified By: manual | automation
+- Verified At: `{yyyy-mm-dd hh:mm:ss}`
+- Evidence: `{command output summary / test report / PR link}`
+
 **Sub-tasks:**
 - [ ] {Sub-task 1}
 - [ ] {Sub-task 2}
@@ -109,4 +119,4 @@ Use only the sections that match this feature's scope.
 
 - Update status in real time: `pending` -> `in_progress` -> `completed`.
 - If implementation deviates from design, record reason and impact.
-- Do not mark completed without verification evidence.
+- Do not mark completed without `Completion Evidence`.

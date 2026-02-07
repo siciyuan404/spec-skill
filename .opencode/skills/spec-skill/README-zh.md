@@ -44,7 +44,39 @@ WHEN 密码太短 THE SYSTEM SHALL 显示"密码必须至少 8 个字符"
 - **代码审查** - 审查最佳实践和问题
 - **性能检查** - 识别性能瓶颈
 
+### ✅ 可执行校验与模式控制（新增）
+
+- **阶段门禁校验**：`gate.requirements` / `gate.design` / `gate.tasks`
+- **队列辅助命令**：`queue.validate` / `queue.sync` / `queue.status`
+- **防过度规划**：`plan.cap`（默认阈值 pending tasks=20）
+- **显式模式**：`planning_mode` / `execution_mode`（`mode.status`、`mode.switch`）
+
 ## 快速开始
+
+### 0. 可执行辅助脚本
+
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts/spec-skill-ops.ps1 -Command mode.status -ModeFile .specs/spec-mode.md
+```
+
+常用命令：
+
+```powershell
+# 阶段门禁
+powershell -ExecutionPolicy Bypass -File scripts/spec-skill-ops.ps1 -Command gate.requirements -SpecDir .specs/{spec-name}
+powershell -ExecutionPolicy Bypass -File scripts/spec-skill-ops.ps1 -Command gate.design -SpecDir .specs/{spec-name}
+powershell -ExecutionPolicy Bypass -File scripts/spec-skill-ops.ps1 -Command gate.tasks -SpecDir .specs/{spec-name}
+
+# 队列与防过度规划
+powershell -ExecutionPolicy Bypass -File scripts/spec-skill-ops.ps1 -Command queue.validate -QueueFile .specs/task-queue.md
+powershell -ExecutionPolicy Bypass -File scripts/spec-skill-ops.ps1 -Command queue.sync -QueueFile .specs/task-queue.md
+powershell -ExecutionPolicy Bypass -File scripts/spec-skill-ops.ps1 -Command queue.status -QueueFile .specs/task-queue.md
+powershell -ExecutionPolicy Bypass -File scripts/spec-skill-ops.ps1 -Command plan.cap -QueueFile .specs/task-queue.md -PendingTasksThreshold 20 -MaxPendingQueueItems 3
+
+# 模式切换
+powershell -ExecutionPolicy Bypass -File scripts/spec-skill-ops.ps1 -Command mode.switch -ToMode planning_mode -ModeFile .specs/spec-mode.md
+powershell -ExecutionPolicy Bypass -File scripts/spec-skill-ops.ps1 -Command mode.switch -ToMode execution_mode -ModeFile .specs/spec-mode.md
+```
 
 ### 1. 创建新规范
 
@@ -92,7 +124,7 @@ Claude 将：
 
 ```
 spec-skill/
-├── SKILL-zh.md              # 中文技能定义（主文件）
+├── SKILL.md                 # 技能定义（主文件）
 ├── README-zh.md             # 中文用户指南（本文件）
 ├── references/              # 参考资料和指南
 │   ├── ears-guide.md        # EARS 表示法规范
@@ -414,6 +446,58 @@ powershell -ExecutionPolicy Bypass -File scripts/verify-spec-skill-consistency.p
 5. 生成综合报告
 ```
 
+### 示例 4：批量队列执行多个 Spec
+
+```
+用户："我有 3 个 spec，都已经有 tasks.md。请按顺序批量执行。"
+
+助手：
+1. 创建 .specs/task-queue.md
+2. 写入队列项：QUEUE-001 / QUEUE-002 / QUEUE-003
+3. 校验每个 spec 存在 requirements.md、design.md、tasks.md
+4. 按队列顺序执行（默认 strict）
+5. 持续更新状态：pending -> in_progress -> completed/blocked
+6. 输出队列进度与阻塞原因
+```
+
+### 示例 5：队列阻塞处理（strict vs continue_on_blocker）
+
+```
+用户："QUEUE-002 被阻塞了，继续后面的。"
+
+助手：
+1. 将 QUEUE-002 标记为 blocked
+2. 记录 blocker 与证据
+3. 将队列模式切换为 continue_on_blocker
+4. 继续执行 QUEUE-003
+5. 最后汇总 blocked 项与重试建议
+```
+
+### 示例 6：从已有 Spec 恢复执行
+
+```
+用户："昨天做到一半，继续 .specs/order-refund/ 这个 spec。"
+
+助手：
+1. 读取 requirements.md / design.md / tasks.md
+2. 定位首个 pending 且依赖满足的 TASK
+3. 继续执行并更新任务状态
+4. 若实现偏离设计，记录偏离原因与影响
+```
+
+### 示例 7：需求到测试的追踪执行
+
+```
+用户："请确保这次实现能追踪到需求和设计。"
+
+助手：
+1. 在 requirements 使用 RQ-* 编号
+2. 在 design 建立 RQ -> DSN 覆盖关系
+3. 在 tasks 绑定 TASK -> RQ/DSN
+4. 每个 TASK 补验证命令与预期结果
+5. 交付时输出追踪摘要
+```
+
 ## 最佳实践
 
 ### 对于 AI 助手
@@ -518,7 +602,7 @@ powershell -ExecutionPolicy Bypass -File scripts/verify-spec-skill-consistency.p
 ## 支持和文档
 
 ### 文档
-- **SKILL-zh.md** - 主要技能定义（中文）
+- **SKILL.md** - 主要技能定义
 - **README-zh.md** - 本用户指南（中文）
 
 ### 参考资料
@@ -574,7 +658,7 @@ Spec-Skill 为适合 AI 辅助工作流程的命令行和 AI 助手友好的格�
 **享受使用 Spec-Skill 进行结构化、规范驱动的开发！🚀**
 
 如有问题，请查阅：
-- SKILL-zh.md - 主要技能定义
+- SKILL.md - 主要技能定义
 - README-zh.md - 本用户指南
 - references/ears-guide.md - EARS 表示法指南
 - references/best-practices.md - 最佳实践

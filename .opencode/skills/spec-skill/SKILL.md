@@ -67,6 +67,12 @@ WHEN [条件/事件] THE SYSTEM SHALL [预期行为]
 - Out of Scope 已列出
 - 未决问题已登记
 
+可执行校验命令（建议）：
+
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts/spec-skill-ops.ps1 -Command gate.requirements -SpecDir .specs/{spec-name}
+```
+
 ### 阶段 2：设计 (`design.md`)
 
 1. 将需求映射到架构与组件
@@ -82,6 +88,12 @@ WHEN [条件/事件] THE SYSTEM SHALL [预期行为]
 - 安全/性能策略已记录
 - 未决问题有负责人和决策时间点
 
+可执行校验命令（建议）：
+
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts/spec-skill-ops.ps1 -Command gate.design -SpecDir .specs/{spec-name}
+```
+
 ### 阶段 3：实现计划 (`tasks.md`)
 
 1. 将设计拆为可执行任务
@@ -96,6 +108,12 @@ WHEN [条件/事件] THE SYSTEM SHALL [预期行为]
 - 每个任务有完成定义（DoD）
 - 验证步骤明确
 - 需求/设计/任务 ID 已建立关联
+
+可执行校验命令（建议）：
+
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts/spec-skill-ops.ps1 -Command gate.tasks -SpecDir .specs/{spec-name}
+```
 
 ### 阶段 4：执行任务
 
@@ -121,6 +139,48 @@ WHEN [条件/事件] THE SYSTEM SHALL [预期行为]
 
 可选行为：
 - 阻塞后继续模式：将当前队列项标记为 `blocked`，继续执行后续项
+
+建议辅助命令：
+
+```powershell
+# 检查依赖完整性与环
+powershell -ExecutionPolicy Bypass -File scripts/spec-skill-ops.ps1 -Command queue.validate -QueueFile .specs/task-queue.md
+
+# 按各 spec tasks 状态自动回写队列状态
+powershell -ExecutionPolicy Bypass -File scripts/spec-skill-ops.ps1 -Command queue.sync -QueueFile .specs/task-queue.md
+
+# 汇总 pending/in_progress/completed/blocked
+powershell -ExecutionPolicy Bypass -File scripts/spec-skill-ops.ps1 -Command queue.status -QueueFile .specs/task-queue.md
+```
+
+防过度规划（默认策略）：
+- 当 pending tasks 超过阈值（默认 20）时，优先执行而非新增 spec
+- 当 pending queue items 超过上限（默认 3）时，优先合并/替换旧规划
+- 新增 spec 需在 queue `Notes` 记录“替换/合并理由”
+
+校验命令：
+
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts/spec-skill-ops.ps1 -Command plan.cap -QueueFile .specs/task-queue.md -PendingTasksThreshold 20 -MaxPendingQueueItems 3
+```
+
+## 显式模式（规划 / 执行）
+
+为避免流程混乱，建议显式维护模式文件：`.specs/spec-mode.md`。
+
+- `planning_mode`：只更新 `requirements.md` / `design.md` / `tasks.md` / `task-queue.md`
+- `execution_mode`：只按 queue 与 TASK 推进实现并记录完成证据
+
+模式命令：
+
+```powershell
+# 查看当前模式
+powershell -ExecutionPolicy Bypass -File scripts/spec-skill-ops.ps1 -Command mode.status -ModeFile .specs/spec-mode.md
+
+# 切换模式（会输出风险提醒）
+powershell -ExecutionPolicy Bypass -File scripts/spec-skill-ops.ps1 -Command mode.switch -ToMode planning_mode -ModeFile .specs/spec-mode.md
+powershell -ExecutionPolicy Bypass -File scripts/spec-skill-ops.ps1 -Command mode.switch -ToMode execution_mode -ModeFile .specs/spec-mode.md
+```
 
 ## 追踪模型（必需）
 
@@ -204,7 +264,7 @@ Steering 用于沉淀项目长期约定。
 在宣布阶段完成前，至少确认：
 - `requirements.md`：EARS 合规、可测试、范围清晰
 - `design.md`：需求覆盖、设计取舍、非功能策略
-- `tasks.md`：任务可执行、DoD 明确、验证与依赖完整
+- `tasks.md`：任务可执行、DoD 明确、验证与依赖完整，`completed` 任务包含完成证据
 - 跨文档 ID 关联未断裂
 
 ## 最佳实践
