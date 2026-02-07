@@ -281,6 +281,15 @@ Automate repetitive tasks through hooks:
 ### Templates
 - Ready-to-use templates in `assets/`
 
+## Installation Entry
+
+Use `docs/INSTALL-zh.md` as the single installation entry document:
+- Provides a raw URL that can be pasted directly into tools
+- Centralizes OpenCode / Claude Code / Codex install commands
+- Easy to reference in issues, chat threads, and team docs
+
+Quick entry: `docs/INSTALL-zh.md`
+
 ## Contributing
 
 To improve this skill:

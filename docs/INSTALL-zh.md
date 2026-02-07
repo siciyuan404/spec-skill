@@ -2,6 +2,8 @@
 
 本文档用于给 OpenCode / Claude Code / Codex 直接安装 `spec-skill`。
 
+相关文档：`docs/CROSS-RUNTIME-COMPATIBILITY-zh.md`（跨运行时兼容策略、发布流程与验收矩阵）
+
 Raw 链接（可直接复制给工具）：
 
 `https://raw.githubusercontent.com/siciyuan404/spec-skill/main/docs/INSTALL-zh.md`

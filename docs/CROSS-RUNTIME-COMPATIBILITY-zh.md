@@ -8,6 +8,10 @@
 - Codex（按目录约定）
 - iFlow
 
+安装入口：`docs/INSTALL-zh.md`
+- Raw 链接（可直接复制给工具）：`https://raw.githubusercontent.com/siciyuan404/spec-skill/main/docs/INSTALL-zh.md`
+- 用途：集中查看并执行 OpenCode / Claude Code / Codex 的安装命令
+
 ---
 
 ## 兼容策略

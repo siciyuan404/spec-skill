@@ -260,6 +260,13 @@ spec-skill/
 
 ## 安装
 
+建议将 `docs/INSTALL-zh.md` 作为安装总入口文档：
+- 提供可直接复制给工具的 Raw 链接
+- 集中维护 OpenCode / Claude Code / Codex 的安装命令
+- 适合在 issue、聊天或团队文档中直接引用
+
+快速入口：`docs/INSTALL-zh.md`
+
 ### Claude Code
 
 安装到 Claude Skills 目录：
