@@ -1,0 +1,38 @@
+{
+  "version": 1,
+  "lastUpdated": 1769162447043,
+  "plugins": [
+    {
+      "filename": "skill-creator",
+      "type": "skill",
+      "metadata": {
+        "sourcePath": "skills/skill-creator",
+        "filename": "skill-creator",
+        "name": "skill-creator",
+        "description": "Guide for creating effective skills. This skill should be used when users want to create a new skill (or update an existing skill) that extends Claude's capabilities with specialized knowledge, workflows, or tool integrations.",
+        "category": "skills",
+        "type": "skill",
+        "size": 39179,
+        "contentHash": "8c0ce23bb87be91f5b0853c2e9815617c3858b63acdddfe5da47d2c2d3a60816",
+        "installedAt": 1768665947596,
+        "updatedAt": 1769162447043
+      }
+    },
+    {
+      "filename": "spec-skill",
+      "type": "skill",
+      "metadata": {
+        "sourcePath": "skills/spec-skill",
+        "filename": "spec-skill",
+        "name": "spec-skill",
+        "description": "This skill should be used when creating, managing, or working with structured specifications (specs) following a three-phase workflow: Requirements → Design → Implementation. It includes steering for project conventions and command-based hooks for automation.",
+        "category": "skills",
+        "type": "skill",
+        "size": 201287,
+        "contentHash": "pending",
+        "installedAt": 1737701350000,
+        "updatedAt": 1737701350000
+      }
+    }
+  ]
+}
