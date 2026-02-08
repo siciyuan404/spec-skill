@@ -21,11 +21,15 @@
 
 ### 📋 EARS 表示法
 
-格式：```
+格式：
+
+```
 WHEN [条件/事件] THE SYSTEM SHALL [预期行为]
 ```
 
-示例：```
+示例：
+
+```
 WHEN 用户提交有效凭据 THE SYSTEM SHALL 认证并创建会话
 WHEN 密码太短 THE SYSTEM SHALL 显示"密码必须至少 8 个字符"
 ```
@@ -80,7 +84,9 @@ powershell -ExecutionPolicy Bypass -File scripts/spec-skill-ops.ps1 -Command mod
 
 ### 1. 创建新规范
 
-告诉 Claude：```
+告诉 Claude：
+
+```
 "创建一个用户认证系统，包含邮箱/密码登录、密码重置和 JWT token"
 ```
 
@@ -91,7 +97,9 @@ Claude 将：
 
 ### 2. 设置 Steering 文件
 
-为项目一致性创建 steering 文件：```
+为项目一致性创建 steering 文件：
+
+```
 "生成我们项目的 steering 文件。我们使用 React、TypeScript 和 PostgreSQL。"
 ```
 
@@ -102,7 +110,9 @@ Claude 将创建：
 
 ### 3. 使用项目约定
 
-引用 steering 以保持一致性：```
+引用 steering 以保持一致性：
+
+```
 "按照我们的 #api-standards 实现这个功能"
 ```
 
@@ -113,7 +123,9 @@ Claude 将：
 
 ### 4. 运行 Hooks
 
-按需执行自动化任务：```
+按需执行自动化任务：
+
+```
 "运行提交前检查"
 "为我刚才做的更改生成文档"
 "为这些更改创建测试"
@@ -134,12 +146,14 @@ spec-skill/
 │       ├── documentation-generator.md
 │       ├── test-generator.md
 │       ├── code-review.md
-│       └── performance-check.md
+│       ├── performance-check.md
+│       └── batch-task-queue.md
 └── assets/                 # 模板和样板
     ├── templates/          # 规范文件模板
     │   ├── requirements-template.md
     │   ├── design-template.md
-    │   └── tasks-template.md
+    │   ├── tasks-template.md
+    │   └── task-queue-template.md
     └── steering-templates/ # Steering 文件模板
         ├── product-template.md
         ├── tech-template.md
@@ -240,6 +254,7 @@ spec-skill/
 - `requirements-template.md` - 需求结构
 - `design-template.md` - 设计文档结构
 - `tasks-template.md` - 实现任务分解
+- `task-queue-template.md` - 批量队列模板
 
 ### Steering 模板
 位于 `assets/steering-templates/`：
@@ -255,6 +270,7 @@ spec-skill/
 3. **测试生成器** - 创建综合测试套件
 4. **代码审查** - 审查最佳实践和问题
 5. **性能检查** - 识别性能瓶颈
+6. **批量任务队列** - 管理多 Spec 批量执行
 
 ## 高级功能
 

@@ -166,8 +166,10 @@ function Run-GateRequirements {
 
   $allRqs = Get-IdsFromLines $lines "RQ"
   foreach ($rq in $allRqs) {
-    $start = ($lines | Select-String -Pattern "^###\s+${rq}:" -SimpleMatch).LineNumber
-    if (-not $start) { continue }
+    $heading = $lines | Where-Object { $_ -match "^###\s+${rq}:" }
+    if (-not $heading) {
+      $gaps += "Requirement $rq has an ID but no matching heading (expected: '### ${rq}: ...')"
+    }
   }
 
   $earsCount = ($lines | Where-Object { $_ -match '^-\s*WHEN\s+.+\s+THE SYSTEM SHALL\s+.+' }).Count
@@ -452,9 +454,11 @@ function Run-ModeSwitch {
     "Current Mode: $ToMode",
     "Updated At: $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')",
     "",
-    "## Risk Reminder",
-    "- " + ($warnings -join "`n- ")
+    "## Risk Reminder"
   )
+  foreach ($w in $warnings) {
+    $content += "- $w"
+  }
 
   $dir = Split-Path -Parent $ModeFile
   if ($dir -and -not (Test-Path -LiteralPath $dir)) {

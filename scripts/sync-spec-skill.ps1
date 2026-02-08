@@ -3,7 +3,8 @@ param(
   [string[]]$TargetDirs = @(
     "spec-skill",
     ".opencode/skills/spec-skill",
-    ".iflow/skills/spec-skill"
+    ".iflow/skills/spec-skill",
+    ".codex/skills/spec-skill"
   ),
   [switch]$ChineseOnly,
   [switch]$WhatIf

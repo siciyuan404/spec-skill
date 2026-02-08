@@ -12,6 +12,8 @@ Examples:
 """
 
 import sys
+import re
+import os
 from pathlib import Path
 
 
@@ -191,6 +193,26 @@ def title_case_skill_name(skill_name):
     return ' '.join(word.capitalize() for word in skill_name.split('-'))
 
 
+def validate_skill_name(skill_name):
+    """
+    Validate skill name format.
+
+    Returns:
+        (bool, str): (is_valid, error_message)
+    """
+    if not skill_name:
+        return False, "Skill name cannot be empty"
+    if len(skill_name) > 40:
+        return False, f"Skill name too long ({len(skill_name)} chars, max 40)"
+    if not re.match(r'^[a-z0-9-]+$', skill_name):
+        return False, "Skill name must be hyphen-case (lowercase letters, digits, and hyphens only)"
+    if skill_name.startswith('-') or skill_name.endswith('-') or '--' in skill_name:
+        return False, "Skill name cannot start/end with hyphen or contain consecutive hyphens"
+    if '/' in skill_name or '\\' in skill_name:
+        return False, "Skill name cannot contain path separators"
+    return True, ""
+
+
 def init_skill(skill_name, path):
     """
     Initialize a new skill directory with template SKILL.md.
@@ -202,6 +224,12 @@ def init_skill(skill_name, path):
     Returns:
         Path to created skill directory, or None if error
     """
+    # Validate skill name
+    valid, err = validate_skill_name(skill_name)
+    if not valid:
+        print(f"Error: {err}")
+        return None
+
     # Determine skill directory path
     skill_dir = Path(path).resolve() / skill_name
 
@@ -240,7 +268,9 @@ def init_skill(skill_name, path):
         scripts_dir.mkdir(exist_ok=True)
         example_script = scripts_dir / 'example.py'
         example_script.write_text(EXAMPLE_SCRIPT.format(skill_name=skill_name))
-        example_script.chmod(0o755)
+        # chmod is only meaningful on Unix-like systems
+        if os.name != 'nt':
+            example_script.chmod(0o755)
         print("✅ Created scripts/example.py")
 
         # Create references/ directory with example reference doc

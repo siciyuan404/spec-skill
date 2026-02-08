@@ -17,8 +17,10 @@ def validate_skill(skill_path):
     if not skill_md.exists():
         return False, "SKILL.md not found"
     
-    # Read and validate frontmatter
-    content = skill_md.read_text()
+    # Read and validate frontmatter (explicit UTF-8 for Windows compatibility)
+    content = skill_md.read_text(encoding='utf-8')
+    # Normalize line endings to LF for consistent regex matching
+    content = content.replace('\r\n', '\n')
     if not content.startswith('---'):
         return False, "No YAML frontmatter found"
     
@@ -29,14 +31,14 @@ def validate_skill(skill_path):
     
     frontmatter = match.group(1)
     
-    # Check required fields
-    if 'name:' not in frontmatter:
+    # Check required fields using line-anchored regex to avoid substring false positives
+    if not re.search(r'^name:', frontmatter, re.MULTILINE):
         return False, "Missing 'name' in frontmatter"
-    if 'description:' not in frontmatter:
+    if not re.search(r'^description:', frontmatter, re.MULTILINE):
         return False, "Missing 'description' in frontmatter"
     
     # Extract name for validation
-    name_match = re.search(r'name:\s*(.+)', frontmatter)
+    name_match = re.search(r'^name:\s*(.+)', frontmatter, re.MULTILINE)
     if name_match:
         name = name_match.group(1).strip()
         # Check naming convention (hyphen-case: lowercase with hyphens)
@@ -46,7 +48,7 @@ def validate_skill(skill_path):
             return False, f"Name '{name}' cannot start/end with hyphen or contain consecutive hyphens"
 
     # Extract and validate description
-    desc_match = re.search(r'description:\s*(.+)', frontmatter)
+    desc_match = re.search(r'^description:\s*(.+)', frontmatter, re.MULTILINE)
     if desc_match:
         description = desc_match.group(1).strip()
         # Check for angle brackets
